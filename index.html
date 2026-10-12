@@ -16,10 +16,10 @@
     <script>
         // 版本檢查 - 強制更新
         const APP_VERSION = '20250226k';
-        const savedVersion = localStorage.getItem('vango_version');
+        const savedVersion = localStorage.getItem('vango2_version');
         
         if (savedVersion !== APP_VERSION) {
-            localStorage.setItem('vango_version', APP_VERSION);
+            localStorage.setItem('vango2_version', APP_VERSION);
         }
     </script>
     <style>
@@ -166,7 +166,7 @@
     <script>
         function clearCache() {
             if(confirm('清除快取並重新載入？\n\n这会刷新页面但保留您的报价记录。')) {
-                localStorage.setItem('vango_version', APP_VERSION);
+                localStorage.setItem('vango2_version', APP_VERSION);
                 location.reload();
             }
         }
@@ -332,17 +332,17 @@
     <input type="file" id="cameraInput" accept="image/*" capture="environment" style="display:none;" onchange="processImage(this)">
 
     <script>
-        let services = JSON.parse(localStorage.getItem('vango_services')) || [
+        let services = JSON.parse(localStorage.getItem('vango2_services')) || [
             {name:'太陽能200W',price:12000},{name:'太陽能400W',price:22000},{name:'鋰電100AH',price:18000},{name:'鋰電200AH',price:32000},{name:'配電系統',price:8000},{name:'Inverter',price:15000},{name:'USB座',price:1200},{name:'12V冰箱',price:12000},{name:'LED燈組',price:3500},{name:'工資(基本)',price:5000},{name:'工資(專業)',price:8000}
         ];
         
-        let quotes = JSON.parse(localStorage.getItem('vango_quotes')) || [];
+        let quotes = JSON.parse(localStorage.getItem('vango2_quotes')) || [];
         let selectedItems = [];
         let editingQuoteIndex = null;
-        let taxRate = parseFloat(localStorage.getItem('vango_taxRate')) || 5;
+        let taxRate = parseFloat(localStorage.getItem('vango2_taxRate')) || 5;
         
         // 車型快捷鍵 - 提前定義避免ReferenceError
-        let presets = JSON.parse(localStorage.getItem('vango_presets')) || [
+        let presets = JSON.parse(localStorage.getItem('vango2_presets')) || [
             {name:'VW Ocean 6.1', items:[{name:'太陽能系統 400W',price:22000},{name:'鋰電200AH',price:32000},{name:'配電系統',price:8000},{name:'inverter',price:15000},{name:'USB座',price:1200},{name:'LED燈組',price:3500}]},
             {name:'VW Beach 6.1', items:[{name:'太陽能系統 400W',price:22000},{name:'鋰電200AH',price:32000},{name:'配電系統',price:8000},{name:'inverter',price:15000},{name:'USB座',price:1200},{name:'LED燈組',price:3500}]},
             {name:'Marco Polo', items:[{name:'太陽能系統 600W',price:28000},{name:'鋰電300AH',price:42000},{name:'配電系統',price:10000},{name:'inverter',price:18000},{name:'USB座',price:2400},{name:'LED燈組',price:5000}]},
@@ -353,9 +353,9 @@
             {name:'Sunlight T58', items:[{name:'太陽能系統 400W',price:22000},{name:'鋰電200AH',price:32000},{name:'配電系統',price:8000},{name:'inverter',price:15000},{name:'USB座',price:1200},{name:'LED燈組',price:3500}]}
         ];
         
-        // 第一次載入時儲存到 localStorage
-        if(!localStorage.getItem('vango_presets')) {
-            localStorage.setItem('vango_presets', JSON.stringify(presets));
+        // 第一次載入時儲存到 localStorage2
+        if(!localStorage.getItem('vango2_presets')) {
+            localStorage.setItem('vango2_presets', JSON.stringify(presets));
         }
         
         document.addEventListener('DOMContentLoaded', () => { 
@@ -374,7 +374,7 @@
         
         function updateTaxRate(value) {
             taxRate = parseFloat(value) || 5;
-            localStorage.setItem('vango_taxRate', taxRate);
+            localStorage.setItem('vango2_taxRate', taxRate);
             calculate();
         }
         
@@ -404,7 +404,7 @@
         
         function saveSettings() {
             taxRate = parseFloat(document.getElementById('taxRate').value) || 0;
-            localStorage.setItem('vango_taxRate', taxRate);
+            localStorage.setItem('vango2_taxRate', taxRate);
             alert('設定已儲存！稅率：' + taxRate + '%');
             calculate();
         }
@@ -417,7 +417,7 @@
                 quotes: quotes,
                 presets: presets,
                 services: services,
-                unknownPlates: JSON.parse(localStorage.getItem('vango_unknown_plates') || '[]')
+                unknownPlates: JSON.parse(localStorage.getItem('vango2_unknown_plates') || '[]')
             };
             
             const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
@@ -441,18 +441,18 @@
                     
                     if (data.quotes) {
                         quotes = data.quotes;
-                        localStorage.setItem('vango_quotes', JSON.stringify(quotes));
+                        localStorage.setItem('vango2_quotes', JSON.stringify(quotes));
                     }
                     if (data.presets) {
                         presets = data.presets;
-                        localStorage.setItem('vango_presets', JSON.stringify(presets));
+                        localStorage.setItem('vango2_presets', JSON.stringify(presets));
                     }
                     if (data.services) {
                         services = data.services;
-                        localStorage.setItem('vango_services', JSON.stringify(services));
+                        localStorage.setItem('vango2_services', JSON.stringify(services));
                     }
                     if (data.unknownPlates) {
-                        localStorage.setItem('vango_unknown_plates', JSON.stringify(data.unknownPlates));
+                        localStorage.setItem('vango2_unknown_plates', JSON.stringify(data.unknownPlates));
                     }
                     
                     alert('資料匯入成功！共匯入 ' + (data.quotes ? data.quotes.length : 0) + ' 筆報價記錄');
@@ -495,7 +495,7 @@
         
         function renderUnknownPlates() {
             const container = document.getElementById('unknownPlatesList');
-            const plates = JSON.parse(localStorage.getItem('vango_unknown_plates')) || [];
+            const plates = JSON.parse(localStorage.getItem('vango2_unknown_plates')) || [];
             
             if(plates.length === 0) {
                 container.innerHTML = '<div style="text-align:center;color:var(--text-muted);padding:10px;">尚無資料</div>';
@@ -512,9 +512,9 @@
         
         function deleteUnknownPlate(index) {
             if(confirm('確定要刪除？')) {
-                let plates = JSON.parse(localStorage.getItem('vango_unknown_plates')) || [];
+                let plates = JSON.parse(localStorage.getItem('vango2_unknown_plates')) || [];
                 plates.splice(index, 1);
-                localStorage.setItem('vango_unknown_plates', JSON.stringify(plates));
+                localStorage.setItem('vango2_unknown_plates', JSON.stringify(plates));
                 renderUnknownPlates();
             }
         }
@@ -548,7 +548,7 @@
             if(newPrice === null) return;
             
             services[index] = {name: newName.trim(), price: parseInt(newPrice) || 0};
-            localStorage.setItem('vango_services', JSON.stringify(services));
+            localStorage.setItem('vango2_services', JSON.stringify(services));
             renderServices();
             renderAllServices();
             alert('已更新！');
@@ -557,7 +557,7 @@
         function deleteService(index) {
             if(confirm('確定要刪除「' + services[index].name + '」？')) {
                 services.splice(index, 1);
-                localStorage.setItem('vango_services', JSON.stringify(services));
+                localStorage.setItem('vango2_services', JSON.stringify(services));
                 renderServices();
                 renderAllServices();
             }
@@ -701,7 +701,7 @@
                 alert('報價單已儲存！');
             }
             
-            localStorage.setItem('vango_quotes', JSON.stringify(quotes));
+            localStorage.setItem('vango2_quotes', JSON.stringify(quotes));
             editingQuoteIndex = null;
             clearForm();
             renderQuotes();
@@ -931,7 +931,7 @@
         
         function saveUnmatchedPlate(plate) {
             // 取得現有資料
-            let plates = JSON.parse(localStorage.getItem('vango_unknown_plates')) || [];
+            let plates = JSON.parse(localStorage.getItem('vango2_unknown_plates')) || [];
             
             // 檢查是否已存在
             const exists = plates.find(p => p.plate === plate);
@@ -941,7 +941,7 @@
                     found: false,
                     date: new Date().toISOString()
                 });
-                localStorage.setItem('vango_unknown_plates', JSON.stringify(plates));
+                localStorage.setItem('vango2_unknown_plates', JSON.stringify(plates));
             }
         }
         
@@ -1155,7 +1155,7 @@
         function deleteQuote(index) {
             if(confirm('確定要刪除這筆報價記錄？')) {
                 quotes.splice(index, 1);
-                localStorage.setItem('vango_quotes', JSON.stringify(quotes));
+                localStorage.setItem('vango2_quotes', JSON.stringify(quotes));
                 renderQuotes();
             }
         }
@@ -1182,7 +1182,7 @@
             const price = parseInt(document.getElementById('newServicePrice').value) || 0;
             if(name && price > 0) {
                 services.push({name, price});
-                localStorage.setItem('vango_services', JSON.stringify(services));
+                localStorage.setItem('vango2_services', JSON.stringify(services));
                 renderServices();
                 renderAllServices();
                 document.getElementById('newServiceName').value = '';
@@ -1319,7 +1319,7 @@
             });
             p.items = newItems;
             presetItems = newItems;
-            localStorage.setItem('vango_presets', JSON.stringify(presets));
+            localStorage.setItem('vango2_presets', JSON.stringify(presets));
             editingPresetIndex = null;
             renderPresets();
             renderVehiclePresets();
@@ -1346,7 +1346,7 @@
             };
             
             presets.push(preset);
-            localStorage.setItem('vango_presets', JSON.stringify(presets));
+            localStorage.setItem('vango2_presets', JSON.stringify(presets));
             presetItems = [];
             renderPresetItemsList();
             renderPresets();
@@ -1367,7 +1367,7 @@
         
         function deletePreset(index) {
             presets.splice(index, 1);
-            localStorage.setItem('vango_presets', JSON.stringify(presets));
+            localStorage.setItem('vango2_presets', JSON.stringify(presets));
             renderPresets();
             renderVehiclePresets();
         }
