@@ -149,7 +149,7 @@
     </header>
     
     <nav class="bottom-nav" style="position:fixed;top:54px;bottom:auto;border-top:none;border-bottom:1px solid rgba(212,168,83,0.2);">
-        <button class="nav-item active" onclick="switchScreen('new')">
+        <button class="nav-item active" onclick="createNewQuote()">
             <span class="nav-icon">📝</span><span>報價</span>
         </button>
         <button class="nav-item" onclick="switchScreen('list')">
@@ -226,7 +226,7 @@
             
             <div class="card">
                 <div class="card-header"><div class="card-title">📝 已選項目 <span id="itemCount" style="font-weight:400;color:var(--text-muted);font-size:12px;">0</span></div></div>
-                <div id="selectedItems"></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span style="font-size:12px;color:#666;">計算方式:</span><button id="separateToggle" onclick="toggleSeparateMode()" style="padding:8px 16px;border-radius:20px;border:2px solid #ddd;background:#fff;font-size:12px;font-weight:bold;">⭕ 合併</button></div><div id="selectedItems"></div>
             </div>
             
             <div class="card">
@@ -656,6 +656,12 @@
             return {subtotal, tax, total, deposit, balance, discount};
         }
         
+        let separateMode = false; // 分開計算模式
+        function toggleSeparateMode() {
+            separateMode = !separateMode;
+            document.getElementById("separateToggle").textContent = separateMode ? "✅ 分開" : "⭕ 合併";
+            renderItems();
+        }
         function saveQuote() {
             const name = document.getElementById('customerName').value.trim();
             const phone = document.getElementById('customerPhone').value.trim();
@@ -693,7 +699,25 @@
                 subtotal, tax, total, deposit, balance, taxRate, taxLabel
             };
             
-            if(editingQuoteIndex !== null) {
+            if(separateMode) {
+                // 分開模式：每個項目單獨儲存
+                selectedItems.forEach((item, idx) => {
+                    const today = new Date().toISOString().slice(0,10).replace(/-/g,'');
+                    const seq = String(quotes.length + idx + 1).padStart(3, '0');
+                    const singleQuote = {
+                        ...quote,
+                        id: today + '-' + seq,
+                        items: [{name: item.name, qty: item.qty, price: item.price}],
+                        subtotal: item.qty * item.price,
+                        tax: Math.round(item.qty * item.price * taxRate / 100),
+                        total: Math.round(item.qty * item.price * (1 + taxRate/100)),
+                        deposit: 0,
+                        balance: Math.round(item.qty * item.price * (1 + taxRate/100))
+                    };
+                    quotes.unshift(singleQuote);
+                });
+                alert("已儲存為 " + selectedItems.length + " 張分開的報價單！");
+            } else if(editingQuoteIndex !== null) {
                 quotes[editingQuoteIndex] = quote;
                 alert('報價單已更新！');
             } else {
@@ -1595,4 +1619,14 @@
         // }
     </script>
 </body>
-</html>
+</html><script>
+function createNewQuote() {
+    // Save current quote first if there are items
+    if (selectedItems.length > 0) {
+        saveQuote();
+    }
+    // Clear current quote to start new one
+    clearForm();
+    switchScreen('new');
+}
+</script>
